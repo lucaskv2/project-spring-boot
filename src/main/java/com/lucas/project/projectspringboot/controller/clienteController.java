@@ -8,6 +8,8 @@ import com.lucas.project.projectspringboot.model.entity.Cliente;
 import com.lucas.project.projectspringboot.model.payload.MensajeResponse;
 import com.lucas.project.projectspringboot.service.IClienteService;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,7 @@ public class clienteController {
     }
 
     @PostMapping("cliente") 
-    public ResponseEntity<?> create(@RequestBody ClienteDto clienteDto){ //@RequestBody: se utiliza para indicar que un método de controlador espera que el cuerpo de la solicitud HTTP se convierta automáticamente en un objeto Java.
+    public ResponseEntity<?> create(@RequestBody @Valid ClienteDto clienteDto){ //@RequestBody: se utiliza para indicar que un método de controlador espera que el cuerpo de la solicitud HTTP se convierta automáticamente en un objeto Java.
         Cliente clienteSave = null;
         try {
             clienteSave = clienteService.save(clienteDto);
@@ -94,11 +96,7 @@ public class clienteController {
                         .build()
                         , HttpStatus.CREATED);
                 }else{
-                    return new ResponseEntity<>(MensajeResponse.builder()
-                                                    .mensaje("El registro no se encuentra en la BD")
-                                                    .object(null)
-                                                    .build()
-                                                , HttpStatus.NOT_FOUND);
+                    throw new ResourceNotFoundException("cliente", "id", id);
                 }
                 
     
