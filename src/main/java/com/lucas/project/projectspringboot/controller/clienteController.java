@@ -2,6 +2,7 @@ package com.lucas.project.projectspringboot.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lucas.project.projectspringboot.exception.ResourceNotFoundException;
 import com.lucas.project.projectspringboot.model.dto.ClienteDto;
 import com.lucas.project.projectspringboot.model.entity.Cliente;
 import com.lucas.project.projectspringboot.model.payload.MensajeResponse;
@@ -33,12 +34,8 @@ public class clienteController {
     @GetMapping("clientes")
     public ResponseEntity<?> showAll(){
         List<Cliente> getList = clienteService.listAll();
-        if (getList == null) {
-            return new ResponseEntity<>(MensajeResponse.builder()
-                                                        .mensaje("No hay registros")
-                                                        .object(null)
-                                                        .build()
-                                        , HttpStatus.OK);
+        if (getList == null || getList.isEmpty()) {
+            throw new ResourceNotFoundException("clientes");
         }
         
         
@@ -136,11 +133,7 @@ public class clienteController {
     public ResponseEntity<?> showById(@PathVariable Integer id){
         Cliente cliente = clienteService.findById(id);
         if (cliente == null) {
-            return new ResponseEntity<>(MensajeResponse.builder()
-                                                        .mensaje("El cliente no existe")
-                                                        .object(null)
-                                                        .build()
-                                        , HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResourceNotFoundException("cliente", "id", id);
         }
         
         
