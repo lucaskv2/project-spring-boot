@@ -36,4 +36,18 @@ public class GlobalExceptionHandler {
                                                                         ApiResponse apiResponse = new ApiResponse(exception.getMessage(), webRequest.getDescription(false));
                                                                         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
                                                                     }
+    
+    @ExceptionHandler(BadRequestException.class) //Esta anotacion permite obtener los resultados en tiempo de ejecución de estos errores. 
+    public ResponseEntity<ApiResponse> handlerBadRequestException(BadRequestException exception,
+                                                                    WebRequest webRequest){
+                                                                        ApiResponse apiResponse = new ApiResponse(exception.getMessage(), webRequest.getDescription(false));
+                                                                        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+                                                                     }
+
+    @ExceptionHandler(Exception.class) //Esta anotacion permite obtener los resultados en tiempo de ejecución de estos errores. 
+    public ResponseEntity<ApiResponse> handlerException(Exception exception,
+                                                                    WebRequest webRequest){
+                                                                        ApiResponse apiResponse = new ApiResponse(exception.getMessage(), webRequest.getDescription(false));
+                                                                        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+                                                                     }
 }

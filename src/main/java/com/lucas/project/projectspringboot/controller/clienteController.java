@@ -2,6 +2,7 @@ package com.lucas.project.projectspringboot.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lucas.project.projectspringboot.exception.BadRequestException;
 import com.lucas.project.projectspringboot.exception.ResourceNotFoundException;
 import com.lucas.project.projectspringboot.model.dto.ClienteDto;
 import com.lucas.project.projectspringboot.model.entity.Cliente;
@@ -66,11 +67,7 @@ public class clienteController {
                     .build()
                     , HttpStatus.CREATED);
         } catch (DataAccessException exDt) {
-            return new ResponseEntity<>(MensajeResponse.builder()
-                                                        .mensaje(exDt.getMessage())
-                                                        .object(null)
-                                                        .build()
-                                        , HttpStatus.METHOD_NOT_ALLOWED);
+            throw new BadRequestException(exDt.getMessage());
         }
         
         
@@ -102,11 +99,7 @@ public class clienteController {
     
                 
             } catch (DataAccessException exDt) {
-                return new ResponseEntity<>(MensajeResponse.builder()
-                                                            .mensaje(exDt.getMessage())
-                                                            .object(null)
-                                                            .build()
-                                            , HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new BadRequestException(exDt.getMessage());
             }
         
     }
@@ -115,15 +108,13 @@ public class clienteController {
     public ResponseEntity<?> delete(@PathVariable Integer id){ //@PathVariable: indica que este id es una variable en forma de parametro 
         try {
             Cliente clienteDelete = clienteService.findById(id);
+            if (clienteDelete == null) {
+                throw new ResourceNotFoundException("cliente", "id", id);
+            }
             clienteService.delete(clienteDelete);
             return new ResponseEntity<>(clienteDelete, HttpStatus.NO_CONTENT);
         } catch (DataAccessException exDt) {
-
-            return new ResponseEntity<>(MensajeResponse.builder()
-                                                        .mensaje(exDt.getMessage())
-                                                        .object(null)
-                                                        .build()
-                                        , HttpStatus.METHOD_NOT_ALLOWED);
+            throw new BadRequestException(exDt.getMessage());
         }
     }
 
